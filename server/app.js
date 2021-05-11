@@ -6,13 +6,24 @@ const cors = require("cors");
 
 const app = express();
 
-const app = express();
+app.use(express.json());
 
-app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(cors({ origin: "http://localhost:3000" }));
+
+const db = require("./config/db.config.js");
+db();
+
+const router = require("./routes/index.routes");
+app.use("/", router);
 
 const roomRouter = require("./routes/room.routes");
 app.use("/", roomRouter);
 
-app.use("/", router);
+const reviewRouter = require("./routes/review.routes");
+app.use("/", reviewRouter);
 
-app.listen(4000, () => console.log("Server is up and running at port 4000"));
+app.listen(Number(process.env.PORT), () =>
+  console.log(`Server up and running at port ${process.env.PORT}`)
+);
